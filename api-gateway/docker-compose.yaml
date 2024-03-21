@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mubina2007
+      PGDATA: /data/postgres
+      POSTGRES_DB: auth
+    volumes:
+      - db:/databasedatadb/postgres
+    ports:
+      - "5332:5332"
+    networks:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  migrate:
+    image: migrate/migrate
+    networks:
+      - db
+    volumes:
+      - ./migrations:/migrations
+    command: ["-path", "/migrations", "-database",  "postgres://postgres:mubina2007@db:5432/auth?sslmode=disable", "up"]
+    depends_on:
+      - db
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27018:27018"
+    volumes:
+      - mongodata:/data/db
+    networks:
+      - db
+
+  userservice:
+    container_name: userservice
+    build: ../user-service
+    depends_on:
+      - mongodb
+    ports:
+      - "8081:8081"
+    networks:
+      - db
+
+  productservice:
+    container_name: productservice
+    build: ../product-service
+    depends_on:
+      - mongodb
+    ports:
+      - "5050:5050"
+    networks:
+      - db
+
+  api:
+    container_name: api
+    build: .
+    depends_on:
+      - productservice
+      - userservice
+      - db
+    ports:
+      - "4040:4040"
+    networks:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  mongodata:
+  db:

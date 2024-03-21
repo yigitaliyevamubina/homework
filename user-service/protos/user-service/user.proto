@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package user;
+
+message User {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  int64 age = 4;
+  string email = 5;
+  string password = 6;
+  string refresh_token = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  string deleted_at = 10;
+}
+
+message GetUserId {
+  string user_id = 1;
+}
+
+message GetListRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetListResponse {
+  int64 count = 1;
+  repeated User users = 2;
+}
+
+message CheckFieldRequest {
+  string field = 1;
+  string data = 2;
+}
+
+message CheckFieldResponse {
+  bool status = 1;
+}
+
+message Status {
+  bool success = 1;
+}
+
+message IfExists {
+  string email = 1;
+}
+
+message UpdateRefreshTokenReq {
+  string user_id = 1;
+  string refresh_token = 2;
+}
+
+service UserService {
+  rpc CreateUser(User) returns (User) {};
+  rpc GetUserById(GetUserId) returns (User) {};
+  rpc UpdateUser(User) returns (User) {};
+  rpc DeleteUser(GetUserId) returns (Status) {};
+  rpc ListUsers(GetListRequest) returns (GetListResponse) {};
+  rpc CheckField(CheckFieldRequest) returns (CheckFieldResponse) {};
+  rpc Check(IfExists) returns (User) {};
+  rpc UpdateRefreshToken(UpdateRefreshTokenReq) returns (Status) {};
+}
+

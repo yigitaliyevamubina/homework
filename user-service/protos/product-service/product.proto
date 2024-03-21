@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package product;
+
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  int32 amount = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  string deleted = 8;
+}
+
+message GetProductId {
+  int32 product_id = 1;
+}
+
+message GetListRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetListResponse {
+  int64 count = 1;
+  repeated Product products = 2;
+}
+
+message Status {
+  bool success = 1;
+}
+
+message ProductAmountRequest {
+  int32 product_id = 1;
+  int32 amount_by = 2;
+}
+
+message ProductAmountResponse {
+  bool is_enough = 1;
+  Product product = 2;
+}
+
+message CheckAmountResponse {
+  int32 product_id = 1;
+  int32 amount = 2;
+}
+
+message BuyProductRequest {
+  string user_id = 1;
+  int32 product_id = 2;
+  int32 amount = 3;
+}
+
+message GetUserID {
+  string user_id = 1;
+}
+
+message GetPurchasedProductsResponse {
+  repeated Product products = 1;
+}
+
+service ProductService {
+  rpc CreateProduct(Product) returns (Product) {};
+  rpc GetProductById(GetProductId) returns (Product) {};
+  rpc UpdateProduct(Product) returns (Product) {};
+  rpc DeleteProduct(GetProductId) returns (Status) {};
+  rpc ListProducts(GetListRequest) returns (GetListResponse) {};
+  rpc IncreaseProductAmount(ProductAmountRequest) returns (ProductAmountResponse) {};
+  rpc DecreaseProductAmount(ProductAmountRequest) returns (ProductAmountResponse) {};
+  rpc CheckAmount(GetProductId) returns (CheckAmountResponse) {};
+  rpc BuyProduct(BuyProductRequest) returns (Product) {};
+  rpc GetPurchasedProductsByUserId(GetUserID) returns (GetPurchasedProductsResponse) {}
+}

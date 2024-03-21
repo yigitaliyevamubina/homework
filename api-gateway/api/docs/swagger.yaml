@@ -1,0 +1,1060 @@
+definitions:
+  models.AccessTokenUpdateReq:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  models.AccessTokenUpdateResp:
+    properties:
+      access_token:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.AddPolicyRequest:
+    properties:
+      policy:
+        $ref: '#/definitions/models.Policy'
+    type: object
+  models.AdminLoginReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.AdminLoginResp:
+    properties:
+      access_token:
+        type: string
+    type: object
+  models.AdminReq:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  models.AmountUpdateResp:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  models.BuyProductRequest:
+    properties:
+      amount:
+        type: integer
+      product_id:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  models.BuyProductResponse:
+    properties:
+      amount:
+        type: integer
+      message:
+        type: string
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.DeleteAdmin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.ListProducts:
+    properties:
+      count:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+    type: object
+  models.ListRolePolicyResp:
+    properties:
+      policies:
+        items:
+          $ref: '#/definitions/models.Policy'
+        type: array
+    type: object
+  models.ListUsers:
+    properties:
+      count:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/models.UserModel'
+        type: array
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Policy:
+    properties:
+      endpoint:
+        type: string
+      method:
+        type: string
+      role:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      amount:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  models.ProductAmountRequest:
+    properties:
+      amount:
+        type: integer
+      product_id:
+        type: integer
+    type: object
+  models.PurchasedProductsList:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+    type: object
+  models.RbacAllRolesResp:
+    properties:
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  models.RegisterUserResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.Status:
+    properties:
+      success:
+        type: boolean
+    type: object
+  models.SuperAdminMessage:
+    properties:
+      message:
+        type: string
+    type: object
+  models.UserModel:
+    properties:
+      access_token:
+        type: string
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  models.UserRequest:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
+  models.UserWithProducts:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      user:
+        $ref: '#/definitions/models.UserRequest'
+    type: object
+  models.VerifyUserResponse:
+    properties:
+      access_token:
+        type: string
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      refresh-tokens:
+        type: string
+    type: object
+host: localhost:7070
+info:
+  contact: {}
+  description: Auth, Role-management, Product, User
+  title: THIRD EXAM
+  version: "1.0"
+paths:
+  /v1/auth/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new admin if you are a superadmin
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminReq'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: create admin
+      tags:
+      - Auth
+  /v1/auth/delete:
+    delete:
+      consumes:
+      - application/json
+      description: delete admin if you are a superadmin
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteAdmin'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete admin
+      tags:
+      - Auth
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: login as admin
+      parameters:
+      - description: Login
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminLoginReq'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AdminLoginResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: login
+      tags:
+      - Auth
+  /v1/product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get product
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get product by id
+      tags:
+      - Product
+  /v1/product/buy:
+    post:
+      consumes:
+      - application/json
+      description: buy a product
+      parameters:
+      - description: Purchase a product
+        in: body
+        name: PurchaseInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.BuyProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BuyProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: buy a product
+      tags:
+      - Product
+  /v1/product/create:
+    post:
+      consumes:
+      - application/json
+      description: Insert a new product with provided details
+      parameters:
+      - description: Create product
+        in: body
+        name: ProductDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: create product
+      tags:
+      - Product
+  /v1/product/decrease:
+    post:
+      consumes:
+      - application/json
+      description: Decrease the amount of product
+      parameters:
+      - description: Decrease the amount
+        in: body
+        name: PurchaseInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductAmountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AmountUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: decrease the amount
+      tags:
+      - Product
+  /v1/product/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Status'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete product
+      tags:
+      - Product
+  /v1/product/increase:
+    post:
+      consumes:
+      - application/json
+      description: Increase the amount of product
+      parameters:
+      - description: Increase the amount
+        in: body
+        name: PurchaseInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductAmountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Status'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: increase the amount
+      tags:
+      - Product
+  /v1/product/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update ptoduct
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Product
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: update product
+      tags:
+      - Product
+  /v1/products/{page}/{limit}:
+    get:
+      consumes:
+      - application/json
+      description: get all products
+      parameters:
+      - description: page
+        in: path
+        name: page
+        required: true
+        type: string
+      - description: limit
+        in: path
+        name: limit
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ListProducts'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get all products
+      tags:
+      - Product
+  /v1/products/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get all purchased products by user id
+      parameters:
+      - description: id
+        in: path
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.PurchasedProductsList'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all purchased products by user id
+      tags:
+      - Product
+  /v1/rbac/add/policy:
+    post:
+      consumes:
+      - application/json
+      description: Add policy to a role
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: policy
+        in: body
+        name: policy
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPolicyRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: add policy to a role
+      tags:
+      - Role-management
+  /v1/rbac/delete/policy:
+    delete:
+      consumes:
+      - application/json
+      description: Delete policy
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: policy
+        in: body
+        name: policy
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPolicyRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete policy
+      tags:
+      - Role-management
+  /v1/rbac/policies/{role}:
+    get:
+      consumes:
+      - application/json
+      description: Get all policies of a role
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: role
+        in: path
+        name: role
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ListRolePolicyResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all policies of a role
+      tags:
+      - Role-management
+  /v1/rbac/roles:
+    get:
+      consumes:
+      - application/json
+      description: Get all roles
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RbacAllRolesResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all roles
+      tags:
+      - Role-management
+  /v1/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserWithProducts'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get user by id
+      tags:
+      - User
+  /v1/user/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with provided details
+      parameters:
+      - description: Create user
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserModel'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: create user
+      tags:
+      - User
+  /v1/user/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Status'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete user
+      tags:
+      - User
+  /v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Login
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserModel'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: login user
+      tags:
+      - User
+  /v1/user/refresh:
+    post:
+      consumes:
+      - application/json
+      description: get access token updated
+      parameters:
+      - description: refresh-token
+        in: body
+        name: refresh-token
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccessTokenUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AccessTokenUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: update access token
+      tags:
+      - User
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with provided details
+      parameters:
+      - description: Register user
+        in: body
+        name: User-data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: register user
+      tags:
+      - User
+  /v1/user/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update User
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyUserResponse'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.VerifyUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: update user
+      tags:
+      - User
+  /v1/user/verify/{email}/{code}:
+    get:
+      consumes:
+      - application/json
+      description: Verify a user with code sent to their email
+      parameters:
+      - description: email
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.VerifyUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: verify user
+      tags:
+      - User
+  /v1/users/{page}/{limit}:
+    get:
+      consumes:
+      - application/json
+      description: get all users
+      parameters:
+      - description: page
+        in: path
+        name: page
+        required: true
+        type: string
+      - description: limit
+        in: path
+        name: limit
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ListUsers'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all users
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
